@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { LoginModalComponent } from '../login-modal/login-modal.component'; // Asegúrate de que la ruta sea correcta
 
 @Component({
   selector: 'app-home',
@@ -7,6 +9,11 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  constructor() {}
-
+  constructor(private modalController: ModalController) {}
+  async openLoginModal() {
+    const modal = await this.modalController.create({
+      component: LoginModalComponent
+    });
+    return await modal.present();
+  }
 }
