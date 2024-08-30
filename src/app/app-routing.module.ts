@@ -10,7 +10,11 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
+  },  {
+    path: 'registro',
+    loadChildren: () => import('./login-modal/registro/registro.module').then( m => m.RegistroPageModule)
   },
+
 ];
 
 @NgModule({
