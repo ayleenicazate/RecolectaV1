@@ -21,6 +21,19 @@ ion-fab {
   margin-bottom: var(--ion-safe-area-bottom, 0);
 }
 
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px); /* Salto de 10px hacia arriba */
+  }
+}
+
+.bouncing {
+  animation: bounce 1s infinite; /* Repite la animación cada segundo */
+}
+
 
 
 
