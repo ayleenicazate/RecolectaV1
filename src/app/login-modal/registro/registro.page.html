@@ -1,18 +1,38 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Registro</ion-title>
-  </ion-toolbar>
-</ion-header>
+<form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+  <ion-item>
+    <ion-label position="floating">Nombre</ion-label>
+    <ion-input formControlName="name"></ion-input>
+  </ion-item>
+  <div *ngIf="myForm.get('name')?.invalid && myForm.get('name')?.touched">
+    <ion-text color="danger">
+      <p *ngIf="myForm.get('name')?.errors?.['required']">El nombre es obligatorio.</p>
+      <p *ngIf="myForm.get('name')?.errors?.['minlength']">El nombre debe tener mínimo 3 letras.</p>
+    </ion-text>
+  </div>
 
-<ion-content padding>
+  <ion-item>
+    <ion-label position="floating">Correo</ion-label>
+    <ion-input formControlName="email"></ion-input>
+  </ion-item>
+  <div *ngIf="myForm.get('email')?.invalid && myForm.get('email')?.touched">
+    <ion-text color="danger">
+      <p *ngIf="myForm.get('email')?.errors?.['required']">El correo es obligatorio.</p>
+      <p *ngIf="myForm.get('email')?.errors?.['pattern']">Ingresa un correo válido(ejemplo, ejemplo&#64;ejemplo.com).</p>
+    </ion-text>
+  </div>
 
-  <ion-button expand="block" routerLink="/home" type="submit">Home</ion-button>
+  <ion-item>
+    <ion-label position="floating">Clave</ion-label>
+    <ion-input type="password" formControlName="password"></ion-input>
+  </ion-item>
+  <div *ngIf="myForm.get('password')?.invalid && myForm.get('password')?.touched">
+    <ion-text color="danger">
+      <p *ngIf="myForm.get('password')?.errors?.['required']">La clave es obligatoria.</p>
+      <p *ngIf="myForm.get('password')?.errors?.['minlength']">La clave debe tener mínimo 6 caracteres.</p>
+    </ion-text>
+  </div>
 
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Registro</ion-title>
-    </ion-toolbar>  
-  </ion-header>
+  <ion-button expand="full" type="submit" [disabled]="myForm.invalid">Registrarme</ion-button>
+  <ion-button expand="block" routerLink="/home" type="submit">Inicio</ion-button>
 
-
-</ion-content>
+</form>
