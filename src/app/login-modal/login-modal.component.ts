@@ -2,6 +2,8 @@
 
 import { Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-login-modal',
@@ -10,9 +12,13 @@ import { ModalController } from '@ionic/angular';
 })
 export class LoginModalComponent {
 
-  constructor(private modalController: ModalController) {}
+  constructor(private modalController: ModalController,private router: Router ) {}
 
   dismissModal() {
     this.modalController.dismiss();
+  }
+  ResetPass() {
+    this.router.navigate(['/resetpass']);
+    
   }
 }

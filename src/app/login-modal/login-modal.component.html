@@ -1,4 +1,3 @@
-<!-- login-modal.component.html -->
 <ion-header>
   <ion-toolbar>
     <ion-title>Login</ion-title>
@@ -20,7 +19,7 @@
     </ion-item>
     <ion-button expand="block" type="submit">Login</ion-button>
     <ion-button expand="block" routerLink="/registro" type="submit">Registrarme</ion-button>
-    <button ion-button class="link-button" routerLink="/resetpass">Reestablecer contraseña</button>
+    <button ion-button class="link-button" (click)="ResetPass()">Reestablecer contraseña</button>
 
     
   </form>
