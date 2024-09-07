@@ -1,0 +1,17 @@
+.link-button {
+    background: none;
+    border: none;
+    color: #007bff; /* Color azul similar a un link */
+    text-decoration: underline;
+    padding: 0;
+    font-size: inherit;
+  }
+  
+  .link-button:hover {
+    color: #0056b3; /* Un azul más oscuro al hacer hover */
+  }
+  
+  .link-button:focus {
+    outline: none;
+    box-shadow: none;
+  }

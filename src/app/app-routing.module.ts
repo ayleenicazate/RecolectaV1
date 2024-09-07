@@ -14,6 +14,10 @@ const routes: Routes = [
     path: 'registro',
     loadChildren: () => import('./login-modal/registro/registro.module').then( m => m.RegistroPageModule)
   },
+  {
+    path: 'resetpass',
+    loadChildren: () => import('./login-modal/resetpass/resetpass.module').then( m => m.ResetpassPageModule)
+  },
 
 ];
 
