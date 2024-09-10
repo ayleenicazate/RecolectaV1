@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
 
 
 
@@ -11,18 +9,10 @@ import { ModalController } from '@ionic/angular';
 })
 export class ResetpassPage implements OnInit {
 
-  constructor(private router: Router, private modalController: ModalController) {}
+  constructor() {}
 
   ngOnInit() {
     
   }
 
-  dismissModal() {
-    this.modalController.dismiss();
-  }
-
-  ResetPass() {
-    this.router.navigate(['/resetpass']);
-    
-  }
 }

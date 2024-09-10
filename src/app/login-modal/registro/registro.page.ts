@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ModalController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-registro',
@@ -9,7 +11,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class RegistroPage implements OnInit {
   myForm!: FormGroup; 
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private modalController: ModalController) {}
+
+  dismissModal() {
+    this.modalController.dismiss();
+  }
 
   ngOnInit() {
     this.myForm = this.fb.group({
