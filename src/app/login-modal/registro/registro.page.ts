@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { NavController, ModalController } from '@ionic/angular';
+import { LoginModalComponent } from '../login-modal.component'; 
+
 
 
 @Component({
@@ -11,11 +13,22 @@ import { ModalController } from '@ionic/angular';
 export class RegistroPage implements OnInit {
   myForm!: FormGroup; 
 
-  constructor(private fb: FormBuilder, private modalController: ModalController) {}
+  constructor(private fb: FormBuilder,private modalController: ModalController, private navController: NavController
+  ) {}
+
+  // Este método abre el modal de login
+  async openLoginModal() {
+    await this.navController.navigateRoot('/home');
+    const modal = await this.modalController.create({
+      component: LoginModalComponent
+    });
+    return await modal.present();
+  }
 
   dismissModal() {
     this.modalController.dismiss();
   }
+
 
   ngOnInit() {
     this.myForm = this.fb.group({

@@ -1,6 +1,6 @@
 // login-modal.component.ts
-
-import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
@@ -10,15 +10,41 @@ import { Router } from '@angular/router';
   templateUrl: './login-modal.component.html',
   styleUrls: ['./login-modal.component.scss'],
 })
-export class LoginModalComponent {
+export class LoginModalComponent implements OnInit{
+  myForm!: FormGroup; 
 
-  constructor(private modalController: ModalController,private router: Router ) {}
+
+  constructor(private modalController: ModalController,private router: Router, private fb: FormBuilder ) {}
 
   dismissModal() {
     this.modalController.dismiss();
   }
-  ResetPass() {
+
+  async navigateToRegister() {
+    this.dismissModal(); // Cierra el modal
+    this.router.navigate(['/registro']);
+  }
+
+  async resetPass() {
+    this.dismissModal(); // Cierra el modal
     this.router.navigate(['/resetpass']);
-    
+  }
+
+  
+
+  ngOnInit() {
+    this.myForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@gmail\.com$/)]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
+    });
+  }
+
+  onSubmit() {
+    if (this.myForm.valid) {
+      console.log('Form Data:', this.myForm.value);
+    } else {
+      console.log('Form Invalid');
+    }
   }
 }

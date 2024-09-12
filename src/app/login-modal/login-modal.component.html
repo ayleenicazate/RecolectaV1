@@ -8,28 +8,33 @@
 </ion-header>
 
 <ion-content>
-  <form>
+  <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
     <ion-item>
-      <ion-label position="floating">Usuario</ion-label>
-      <ion-input type="text"></ion-input>
+      <ion-label position="floating">Correo</ion-label>
+      <ion-input formControlName="email"></ion-input>
     </ion-item>
+    <div *ngIf="myForm.get('email')?.invalid && myForm.get('email')?.touched">
+      <ion-text color="danger">
+        <p *ngIf="myForm.get('email')?.errors?.['required']">El correo es obligatorio.</p>
+        <p *ngIf="myForm.get('email')?.errors?.['pattern']">Ingresa un correo válido (ejemplo&#64;gmail.com).</p>
+      </ion-text>
+    </div>
+
     <ion-item>
       <ion-label position="floating">Clave</ion-label>
-      <ion-input type="password"></ion-input>
+      <ion-input type="password" formControlName="password"></ion-input>
     </ion-item>
-    <ion-button expand="block" type="submit">Login</ion-button>
-    <ion-button expand="block" routerLink="/registro" type="submit">Registrarme</ion-button>
-    <button ion-button class="link-button" (click)="ResetPass()">Reestablecer contraseña</button>
-
+    <div *ngIf="myForm.get('password')?.invalid && myForm.get('password')?.touched">
+      <ion-text color="danger">
+        <p *ngIf="myForm.get('password')?.errors?.['required']">La clave es obligatoria.</p>
+        <p *ngIf="myForm.get('password')?.errors?.['minlength']">La clave debe tener mínimo 6 caracteres.</p>
+      </ion-text>
+    </div>
     
-  </form>
-
-  
- 
-
-
-  
+    <ion-button expand="block" type="submit">Login</ion-button>
+    <ion-button expand="block" (click)="navigateToRegister()" type="submit">Registrarme</ion-button>
+    <button ion-button class="link-button"  (click)="resetPass()">Reestablecer contraseña</button> 
+  </form> 
 </ion-content>
-
 
 

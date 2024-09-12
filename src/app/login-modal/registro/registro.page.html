@@ -4,6 +4,9 @@
     <ion-buttons slot="end">
       <ion-button routerLink="/home">Cerrar</ion-button>
     </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-button (click)="openLoginModal()">Atras</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -43,8 +46,6 @@
   </div>
 
   <ion-button expand="full" type="submit" [disabled]="myForm.invalid">Registrarme</ion-button>
-  <ion-button expand="block" routerLink="/home" type="submit">Inicio</ion-button>
-
 </form>
 
 </ion-content>
