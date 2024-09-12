@@ -10,12 +10,14 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LoginModalComponent } from './login-modal/login-modal.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { WelcomeModalComponent } from './welcome-modal/welcome-modal.component';  // Asegúrate de que esto esté
 
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginModalComponent,
+    WelcomeModalComponent,
   ],
   imports: [
     BrowserModule,
