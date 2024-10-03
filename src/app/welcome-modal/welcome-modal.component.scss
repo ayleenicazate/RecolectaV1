@@ -20,7 +20,7 @@ ion-content {
 }
   
   .truck-animation {
-    text-align: center;
+    text-align: left;
     margin-top: 20px;
     animation: drive 3s infinite alternate; /* Animación del camión */
   }
@@ -30,7 +30,7 @@ ion-content {
       transform: translateX(0);
     }
     100% {
-      transform: translateX(200px);
+      transform: translateX(220px);
     }
   }
   
