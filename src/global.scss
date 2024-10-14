@@ -34,5 +34,30 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
-@import '~bootstrap/dist/css/bootstrap.min.css';
+@import '@ionic/angular/css/palettes/dark.class.css';
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+:root {
+  --ion-color-miColorFab: #18850a7c; 
+  --ion-color-miColorFab-contrast: #1a500a;
+
+}
+
+:root {
+    --ion-color-ionBtn: #18850a; 
+    --ion-color-ionBtn-contrast: #1a500a;
+}
+
+ion-fab-button {
+  --background: var(--ion-color-miColorFab);
+  --color: var(--ion-color-miColorFab-contrast);
+}
+
+ion-button {
+    --background: var(--ion-color-ionBtn);
+    --color: var(--ion-color-ionBtn-contrast);
+}
+
+ion-button {
+    --color: #ffffff; /* Cambia el color del texto de los botones a blanco */
+  }

@@ -29,8 +29,10 @@ ion-content {
 }
 
 ion-button {
-  --background: #007bff;  /* Color azul para el botón */
+  --color: #ffffff;
   --border-radius: 5px;
   width: 100%;  /* Asegura que el botón ocupe todo el ancho disponible dentro del modal */
   margin-top: 20px;
 }
+
+
