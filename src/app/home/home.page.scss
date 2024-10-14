@@ -5,9 +5,6 @@ ion-title {
   width: 100%; /* Asegura que ocupe todo el ancho disponible */
   color: white; /* Cambia el color del texto si es necesario para que sea visible sobre la imagen de fondo */
 }
-ion-content {
-  --background: url("/assets/img/bg.png") no-repeat center center / cover; /* Aplica la imagen de fondo */
-}
 
 ion-fab {
   margin-top: var(--ion-safe-area-top, 0);
@@ -29,6 +26,20 @@ ion-fab {
 .bouncing {
   animation: bounce 1s infinite; /* Repite la animación cada segundo */
 }
+
+.map {
+  position: absolute;
+  height: 93%;
+  width: 100vw;
+  background-color: transparent;
+  opacity: 1;
+  transition: opacity 150ms ease-in;  
+}
+
+.map-visible {
+  opacity: 1;
+}
+
 
 
 
