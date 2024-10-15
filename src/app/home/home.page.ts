@@ -47,7 +47,7 @@ export class HomePage implements OnInit {
         "elementType": "all",
         "stylers": [
             {
-                "visibility": "off"
+                "visibility": "on"
             }
         ]
     },
@@ -56,7 +56,7 @@ export class HomePage implements OnInit {
         "elementType": "all",
         "stylers": [
             {
-                "visibility": "off"
+                "visibility": "on"
             }
         ]
     },
