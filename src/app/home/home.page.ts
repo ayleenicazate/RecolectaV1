@@ -21,7 +21,7 @@ export class HomePage implements OnInit {
   center = { lat: -33.033779581976276, lng: -71.53313246449065 };
   map: any;
 
-  // Array hecho a mano de puntos de reciclaje (en futuras versiones esto sera una query a GoogleMapsPlaces)
+  // Array hecho a mano de puntos de reciclaje (en futuras versiones esto sera una query a GoogleMapsPlaces consultando por los puntos limpios que hayan)
   recycleLocations = [
     { lat: -33.04290047293547,  lng: -71.37418257573054 },
     { lat: -33.04124735728023,  lng: -71.44872249170893 },
@@ -39,7 +39,7 @@ export class HomePage implements OnInit {
     { lat: -33.059503234106224, lng: -71.58487598024195 },
   ];
 
-  // Estilo personalizado del mapa (aquí puedes personalizar cada tipo de elemento)
+  // Estilo personalizado del mapa (aquí puedes personalizar cada tipo de elemento ElementType)
   mapStyle = [
     {
       featureType: 'all',
@@ -60,7 +60,7 @@ export class HomePage implements OnInit {
       ],
     },
     {
-      featureType: 'administrative.province',
+      featureType: 'administrative.province', // por ejemplo, administrative.province es el nombre las ciudades creo entonces si le pones visibilidad en off no se mostraraán los nombres en el mapa
       elementType: 'all',
       stylers: [
         {
@@ -69,11 +69,11 @@ export class HomePage implements OnInit {
       ],
     },
     {
-      featureType: 'administrative.locality',
+      featureType: 'administrative.locality', // esta feature son los nombres de las ciudades, por lo tanto, si la dejas no visible no se verán los nombres de las comunas, regiones, etc.
       elementType: 'all',
       stylers: [
         {
-          visibility: 'on',
+          visibility: 'on', // on: se verán los nombres         off: no se verán los nombres
         },
       ],
     },
@@ -123,8 +123,9 @@ export class HomePage implements OnInit {
       ],
     },
     {
-      featureType: 'poi',
-      elementType: 'all',
+      featureType: 'poi',   // la feature 'poi' hace referencia a los puntos de interes
+                            // se refiere a todos los puntos de interes, educacion, parques, iglesias, hospitales, etc
+      elementType: 'all',   
       stylers: [
         {
           visibility: 'off',
@@ -430,11 +431,11 @@ export class HomePage implements OnInit {
     },
   ];
 
-  // Este es el contructor de la HomPage
+  // Este es el contructor de la HomPage (es lo que necesita la Page para poder funcionar correctamente)
   constructor(
-    private modalController: ModalController,
-    private gmaps: GmapsService,
-    private renderer: Renderer2 
+    private modalController: ModalController, // el controller de los modals
+    private gmaps: GmapsService,    
+    private renderer: Renderer2     // renderizar el mapa de la api de google maps
   ) {}
 
   //Metodo con promesa Vacía
