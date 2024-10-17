@@ -1,23 +1,40 @@
+.custom-modal {
+  --background: rgba(0, 0, 0, 0.5);  /* Fondo semi-transparente fuera del modal */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;  /* Asegura que ocupe todo el alto de la pantalla */
+  width: 100%;   /* Asegura que ocupe todo el ancho de la pantalla */
+}
 
+.modal-content {
+  background-color: white;  /* Color de fondo del modal */
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;  /* Ancho máximo del modal */
+  width: 100%;       /* Asegura que ocupe todo el ancho disponible dentro del contenedor */
+  text-align: center; /* Centra el texto dentro del modal */
+}
 
+ion-content {
+  --background: transparent !important;  /* Hace transparente el fondo del ion-content */
+}
 
 .truck-animation {
-  text-align: left;  /* Alinea el ícono del camión al centro */
   margin-top: 20px;
   animation: drive 5s infinite alternate;  /* Animación del camión */
 }
 
 @keyframes drive {
   0% {
-      transform: translateX(0);
+    transform: translateX(0);
   }
   100% {
-      transform: translateX(90%);
+    transform: translateX(90%);
   }
 }
 
 ion-button {
-  --color: #ffffff;
   --border-radius: 5px;
   width: 100%;  /* Asegura que el botón ocupe todo el ancho disponible dentro del modal */
   margin-top: 20px;

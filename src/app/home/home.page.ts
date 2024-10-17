@@ -12,6 +12,7 @@ import { WelcomeModalComponent } from '../welcome-modal/welcome-modal.component'
 import { GmapsService } from '../services/gmaps/gmaps.service';
 import { AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
+import { Geolocation } from '@capacitor/geolocation';
 
 
 
@@ -447,6 +448,8 @@ export class HomePage implements OnInit {
   ) {    this.isAuthenticated$ = this.authService.isAuthenticated(); // Asignar observable
   }
 
+  
+
   //Metodo con promesa Vacía
   ngAfterViewInit() {
     this.loadMap();
@@ -470,7 +473,7 @@ export class HomePage implements OnInit {
       this.renderer.addClass(mapEl, 'visible');
 
       // Añadir marcador de localización central (este pin será la geolocalización en futuras versiones)
-      this.addMarker(this.center, 'assets/icon/pin.png');
+      this.addMarker(this.center, 'assets/icon/pin4.png');
 
       // Llamar a la función para agregar marcadores de reciclaje (llama al array)
       this.addRecycleMarkers(this.recycleLocations);
@@ -505,10 +508,10 @@ export class HomePage implements OnInit {
         position: { lat: location.lat, lng: location.lng },
         map: this.map,
         icon: {
-          url: 'assets/icon/recopin2.png', // icono personalizado
-          scaledSize: new googleMaps.Size(35, 35), // tamaño de vista del icono
+          url: 'assets/icon/recopin4.png', // icono personalizado
+          scaledSize: new googleMaps.Size(30, 30), // tamaño de vista del icono
         },
-        animation: googleMaps.Animation.DROP,
+        animation: googleMaps.Animation.NULL,
       });
     });
   }
@@ -541,10 +544,21 @@ export class HomePage implements OnInit {
 
   // muestra el modal de bienvenida al cargar la página
   async ngOnInit() {
+    // Solicitar la ubicación actual del dispositivo
+    const position = await Geolocation.getCurrentPosition();
+    this.center = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+    };
+
+    // Después de obtener la ubicación actual, abrir el modal de bienvenida
     const modal = await this.modalController.create({
       component: WelcomeModalComponent,
     });
     await modal.present();
+
+    // Cargar el mapa después de obtener la ubicación
+    this.loadMap();
   }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
