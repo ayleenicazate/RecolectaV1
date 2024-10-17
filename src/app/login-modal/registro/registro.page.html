@@ -1,51 +1,59 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Registro</ion-title>
-    <ion-buttons slot="end">
-      <ion-button routerLink="/home">Cerrar</ion-button>
-    </ion-buttons>
-    <ion-buttons slot="start">
-      <ion-button (click)="openLoginModal()">Atras</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
   <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
-  <ion-item>
-    <ion-label position="floating">Nombre</ion-label>
-    <ion-input formControlName="name"></ion-input>
-  </ion-item>
-  <div *ngIf="myForm.get('name')?.invalid && myForm.get('name')?.touched">
-    <ion-text color="danger">
-      <p *ngIf="myForm.get('name')?.errors?.['required']">El nombre es obligatorio.</p>
-      <p *ngIf="myForm.get('name')?.errors?.['minlength']">El nombre debe tener mínimo 3 letras.</p>
-    </ion-text>
-  </div>
+    <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input formControlName="name"></ion-input>
+    </ion-item>
+    <div *ngIf="myForm.get('name')?.invalid && myForm.get('name')?.touched">
+      <ion-text color="danger">
+        <p *ngIf="myForm.get('name')?.errors?.['required']">El nombre es obligatorio.</p>
+        <p *ngIf="myForm.get('name')?.errors?.['minlength']">El nombre debe tener mínimo 3 letras.</p>
+      </ion-text>
+    </div>
+    <ion-item>
+      <ion-label position="floating">Usuario</ion-label>
+      <ion-input formControlName="username"></ion-input>
+    </ion-item>
+    <div *ngIf="myForm.get('username')?.invalid && myForm.get('username')?.touched">
+      <ion-text color="danger">
+        <p *ngIf="myForm.get('username')?.errors?.['required']">El usuario es obligatorio.</p>
+        <p *ngIf="myForm.get('username')?.errors?.['usernameTaken']">El usuario ya está ocupado.</p>
+      </ion-text>
+    </div>
+    <ion-item>
+      <ion-label position="floating">Correo</ion-label>
+      <ion-input formControlName="email"></ion-input>
+    </ion-item>
+    <div *ngIf="myForm.get('email')?.invalid && myForm.get('email')?.touched">
+      <ion-text color="danger">
+        <p *ngIf="myForm.get('email')?.errors?.['required']">El correo es obligatorio.</p>
+        <p *ngIf="myForm.get('email')?.errors?.['pattern']">Ingresa un correo válido.</p>
+        <p *ngIf="myForm.get('email')?.errors?.['emailTaken']">El correo ya está registrado.</p>
+      </ion-text>
+    </div>
+    <ion-item>
+      <ion-label position="floating">Teléfono</ion-label>
+      <ion-input formControlName="phone" type="tel"></ion-input>
+    </ion-item>
+    <div *ngIf="myForm.get('phone')?.invalid && myForm.get('phone')?.touched">
+      <ion-text color="danger">
+        <p *ngIf="myForm.get('phone')?.errors?.['required']">El teléfono es obligatorio.</p>
+        <p *ngIf="myForm.get('phone')?.errors?.['pattern']">El teléfono debe tener 9 dígitos.</p>
+      </ion-text>
+    </div>
 
-  <ion-item>
-    <ion-label position="floating">Correo</ion-label>
-    <ion-input formControlName="email"></ion-input>
-  </ion-item>
-  <div *ngIf="myForm.get('email')?.invalid && myForm.get('email')?.touched">
-    <ion-text color="danger">
-      <p *ngIf="myForm.get('email')?.errors?.['required']">El correo es obligatorio.</p>
-      <p *ngIf="myForm.get('email')?.errors?.['pattern']">Ingresa un correo válido(ejemplo, ejemplo&#64;ejemplo.com).</p>
-    </ion-text>
-  </div>
+    <!-- Clave -->
+    <ion-item>
+      <ion-label position="floating">Clave</ion-label>
+      <ion-input type="password" formControlName="password"></ion-input>
+    </ion-item>
+    <div *ngIf="myForm.get('password')?.invalid && myForm.get('password')?.touched">
+      <ion-text color="danger">
+        <p *ngIf="myForm.get('password')?.errors?.['required']">La clave es obligatoria.</p>
+        <p *ngIf="myForm.get('password')?.errors?.['minlength']">La clave debe tener mínimo 6 caracteres.</p>
+      </ion-text>
+    </div>
 
-  <ion-item>
-    <ion-label position="floating">Clave</ion-label>
-    <ion-input type="password" formControlName="password"></ion-input>
-  </ion-item>
-  <div *ngIf="myForm.get('password')?.invalid && myForm.get('password')?.touched">
-    <ion-text color="danger">
-      <p *ngIf="myForm.get('password')?.errors?.['required']">La clave es obligatoria.</p>
-      <p *ngIf="myForm.get('password')?.errors?.['minlength']">La clave debe tener mínimo 6 caracteres.</p>
-    </ion-text>
-  </div>
-
-  <ion-button expand="full" type="submit" [disabled]="myForm.invalid">Registrarme</ion-button>
-</form>
-
+    <ion-button expand="full" type="submit" [disabled]="myForm.invalid">Registrarme</ion-button>
+  </form>
 </ion-content>

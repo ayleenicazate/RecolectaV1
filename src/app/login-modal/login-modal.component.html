@@ -30,11 +30,20 @@
         <p *ngIf="myForm.get('password')?.errors?.['minlength']">La clave debe tener mínimo 6 caracteres.</p>
       </ion-text>
     </div>
+
+    <!-- Mostrar un mensaje de error en caso de fallo de autenticación -->
+    <ion-text color="danger" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </ion-text>
+
+    <!-- Muestra un spinner mientras se autentica -->
+    <ion-button expand="block" type="submit" [disabled]="myForm.invalid || isLoading">
+      <ion-spinner *ngIf="isLoading"></ion-spinner>
+      <span *ngIf="!isLoading">Login</span>
+    </ion-button>
+
+    <ion-button expand="block" (click)="navigateToRegister()" type="button">Registrarme</ion-button>
     
-    <ion-button expand="block" type="submit">Login</ion-button>
-    <ion-button expand="block" (click)="navigateToRegister()" type="submit">Registrarme</ion-button>
-    <button ion-button class="link-button"  (click)="resetPass()">Reestablecer contraseña</button> 
-  </form> 
+    <ion-button fill="clear" class="link-button" (click)="resetPass()">Reestablecer contraseña</ion-button>
+  </form>
 </ion-content>
-
-

@@ -7,8 +7,11 @@ import {
 } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { LoginModalComponent } from '../login-modal/login-modal.component';
+import { LogeadoModalComponent } from '../login-modal/logeado-modal/logeado-modal.component'; // Importa el modal de perfil
 import { WelcomeModalComponent } from '../welcome-modal/welcome-modal.component'; // Importa el modal de bienvenida
 import { GmapsService } from '../services/gmaps/gmaps.service';
+import { AuthService } from '../services/auth.service';  // Importa el servicio de autenticación
+
 
 @Component({
   selector: 'app-home',
@@ -20,6 +23,8 @@ export class HomePage implements OnInit {
   googleMaps: any;
   center = { lat: -33.033779581976276, lng: -71.53313246449065 };
   map: any;
+
+  isLoggedIn = false; // Con esta variable sabremos si el user esta logeado
 
   // Array hecho a mano de puntos de reciclaje (en futuras versiones esto sera una query a GoogleMapsPlaces consultando por los puntos limpios que hayan)
   recycleLocations = [
@@ -435,7 +440,9 @@ export class HomePage implements OnInit {
   constructor(
     private modalController: ModalController, // el controller de los modals
     private gmaps: GmapsService,    
-    private renderer: Renderer2     // renderizar el mapa de la api de google maps
+    private renderer: Renderer2,     // renderizar el mapa de la api de google maps
+    private authService: AuthService  // Inyecta el servicio de autenticación
+
   ) {}
 
   //Metodo con promesa Vacía
@@ -505,12 +512,33 @@ export class HomePage implements OnInit {
   }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+
   // Este método abre el modal de login
   async openLoginModal() {
     const modal = await this.modalController.create({
       component: LoginModalComponent,
     });
     return await modal.present();
+  }
+
+  async openLoggedInModal() {
+    const modal = await this.modalController.create({
+      component: LogeadoModalComponent,
+    });
+    return await modal.present();
+  }
+
+  // Este método verifica el estado de autenticación y abre el modal correspondiente
+  async handleFloatingButtonClick() {
+    this.authService.isAuthenticated().subscribe((isAuthenticated) => {
+      if (isAuthenticated) {
+        this.openLoggedInModal(); // Usuario logueado
+      } else {
+        this.openLoginModal(); // Usuario no logueado
+      }
+    });
   }
 
   // muestra el modal de bienvenida al cargar la página
@@ -520,5 +548,6 @@ export class HomePage implements OnInit {
     });
     await modal.present();
   }
-}
+  }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

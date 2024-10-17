@@ -11,7 +11,7 @@
 
   <!-- Botón flotante en la esquina superior izquierda -->
   <ion-fab slot="fixed" vertical="top" horizontal="start">
-    <ion-fab-button>
+    <ion-fab-button (click)="handleFloatingButtonClick()">
       <ion-icon name="chevron-forward-circle"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="end">
@@ -26,6 +26,7 @@
       </ion-fab-button>
     </ion-fab-list>
   </ion-fab>
+  
 
   <!-- Ícono de perfil en la esquina superior derecha -->
   <ion-fab slot="fixed" vertical="top" horizontal="end" [edge]="true">

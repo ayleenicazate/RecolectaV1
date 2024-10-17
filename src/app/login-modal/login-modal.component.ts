@@ -1,8 +1,8 @@
-// login-modal.component.ts
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';  // Importa el servicio de autenticación
 
 
 @Component({
@@ -10,41 +10,63 @@ import { Router } from '@angular/router';
   templateUrl: './login-modal.component.html',
   styleUrls: ['./login-modal.component.scss'],
 })
-export class LoginModalComponent implements OnInit{
-  myForm!: FormGroup; 
+export class LoginModalComponent implements OnInit {
+  myForm!: FormGroup;
+  isLoading: boolean = false;  // Para manejar el estado de carga
+  errorMessage: string = '';  // Para mostrar mensajes de error
 
-
-  constructor(private modalController: ModalController,private router: Router, private fb: FormBuilder ) {}
+  constructor(
+    private modalController: ModalController,
+    private router: Router,
+    private fb: FormBuilder,
+    private authService: AuthService  // Inyecta el servicio de autenticación
+  ) {}
 
   dismissModal() {
     this.modalController.dismiss();
   }
 
+  // Navega a la página de registro
   async navigateToRegister() {
     this.dismissModal(); // Cierra el modal
     this.router.navigate(['/registro']);
   }
 
+  // Navega a la página de restablecimiento de contraseña
   async resetPass() {
     this.dismissModal(); // Cierra el modal
     this.router.navigate(['/resetpass']);
   }
 
-  
-
   ngOnInit() {
     this.myForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@gmail\.com$/)]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      email: ['', [Validators.required, Validators.email]],  // Valida un correo válido
+      password: ['', [Validators.required, Validators.minLength(6)]]  // Valida una contraseña de al menos 6 caracteres
     });
   }
 
   onSubmit() {
     if (this.myForm.valid) {
-      console.log('Form Data:', this.myForm.value);
+      this.isLoading = true;
+      const { email, password } = this.myForm.value;
+  
+      this.authService.login(email, password).then((user) => { // Agrega user para manejar el ID
+        this.isLoading = false;
+        if (user) {
+          console.log('Login exitoso, ID:', user.uid); // Asegúrate de que user tenga la propiedad id
+          this.dismissModal();  // Cierra el modal al iniciar sesión exitosamente
+          this.router.navigate(['/home']);  // Redirige a la página principal
+        } else {
+          console.error('Error de login: Usuario no encontrado');
+          this.errorMessage = 'Correo o clave incorrectos. Inténtalo de nuevo.';
+        }
+      }).catch((error: any) => {  // Agrega el tipo 'any' aquí
+        this.isLoading = false;
+        console.error('Error al iniciar sesión:', error);
+        this.errorMessage = 'Correo o clave incorrectos. Inténtalo de nuevo.'; // Manejo de error para mostrar al usuario
+      });
     } else {
-      console.log('Form Invalid');
+      console.log('Formulario inválido');
     }
   }
 }

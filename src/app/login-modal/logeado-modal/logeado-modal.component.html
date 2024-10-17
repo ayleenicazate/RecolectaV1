@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Mi Perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="profile-section">
+    <ion-avatar>
+      <img [src]="userProfileImage" alt="Foto de perfil">
+    </ion-avatar>
+    <h2>{{ userName }}</h2>
+    <p>{{ userEmail }}</p>
+    <ion-button (click)="changeProfilePicture()">Cambiar Foto</ion-button>
+  </div>
+  
+  <ion-button expand="block" (click)="logout()">Cerrar Sesión</ion-button>
+</ion-content>
