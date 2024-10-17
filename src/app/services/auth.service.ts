@@ -9,6 +9,7 @@ import { switchMap } from 'rxjs/operators';
 })
 export class AuthService {
   user$: Observable<firebase.User | null>;
+  authState$: any;
 
   constructor(private afAuth: AngularFireAuth) {
     this.user$ = this.afAuth.authState.pipe(
@@ -53,7 +54,9 @@ export class AuthService {
   }
 
   // Método para verificar si el usuario está autenticado
-  isAuthenticated() {
-    return this.afAuth.authState;
+  isAuthenticated(): Observable<boolean> {
+    return this.afAuth.authState.pipe(
+      switchMap(user => of(!!user)) // Devuelve true si hay un usuario, false si no
+    );
   }
 }

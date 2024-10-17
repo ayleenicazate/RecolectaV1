@@ -11,7 +11,7 @@
 
   <!-- Botón flotante en la esquina superior izquierda -->
   <ion-fab slot="fixed" vertical="top" horizontal="start">
-    <ion-fab-button (click)="handleFloatingButtonClick()">
+    <ion-fab-button>
       <ion-icon name="chevron-forward-circle"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="end">
@@ -26,11 +26,9 @@
       </ion-fab-button>
     </ion-fab-list>
   </ion-fab>
-  
 
-  <!-- Ícono de perfil en la esquina superior derecha -->
   <ion-fab slot="fixed" vertical="top" horizontal="end" [edge]="true">
-    <ion-fab-button class="bouncing" (click)="openLoginModal()">
+    <ion-fab-button class="bouncing" (click)="toggleAuthModal()"> <!-- Cambié openLoginModal() por toggleAuthModal() -->
       <ion-avatar>
         <img
           alt="Silhouette of a person's head"
