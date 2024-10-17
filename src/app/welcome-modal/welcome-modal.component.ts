@@ -14,4 +14,16 @@ export class WelcomeModalComponent {
   close() {
     this.modalCtrl.dismiss();
   }
+
+  async openModal() {
+    const modal = await this.modalCtrl.create({
+      component: WelcomeModalComponent,
+      cssClass: 'custom-modal-class'  // Asigna una clase personalizada
+    });
+    return await modal.present();
+  }
+
 }
+
+
+

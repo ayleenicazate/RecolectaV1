@@ -11,8 +11,8 @@
   background-color: white;  /* Color de fondo del modal */
   padding: 20px;
   border-radius: 10px;
-  max-width: 400px;  /* Ancho máximo del modal */
-  width: 100%;       /* Asegura que ocupe todo el ancho disponible dentro del contenedor */
+  max-width: auto;  /* Ancho máximo del modal */
+  width: auto;       /* Asegura que ocupe todo el ancho disponible dentro del contenedor */
   text-align: center; /* Centra el texto dentro del modal */
 }
 
@@ -21,7 +21,8 @@ ion-content {
 }
 
 .truck-animation {
-  margin-top: 20px;
+  text-align: left;
+  padding: 0;
   animation: drive 5s infinite alternate;  /* Animación del camión */
 }
 
