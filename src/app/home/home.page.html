@@ -14,7 +14,12 @@
 <ion-content>
   <!-- barra de busqueda para el usuario -->
   <div class="search-container">
-    <ion-searchbar [(ngModel)]="searchKeyword" placeholder="Buscar reciclaje..."></ion-searchbar>
+    <ion-searchbar
+      [(ngModel)]="searchKeyword"
+      placeholder="Buscar reciclaje..."
+      (ionInput)="onSearchInput($event)"
+      (ionClear)="clearSearch()"
+    ></ion-searchbar>
   </div>
 
 

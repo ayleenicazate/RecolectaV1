@@ -25,25 +25,9 @@ export class HomePage implements OnInit {
   center = { lat: -33.033779581976276, lng: -71.53313246449065 };
   map: any;
   isAuthenticated$: Observable<boolean>; // Cambiado para almacenar el estado de autenticación
-  searchKeyword: string = 'reciclaje';  // Palabra clave por defecto
+  searchKeyword: string = ''; // Palabra clave por defecto
+  markers: any[] = []; // Array para almacenar los marcadores
 
-  // Array hecho a mano de puntos de reciclaje (en futuras versiones esto sera una query a GoogleMapsPlaces consultando por los puntos limpios que hayan)
-  recycleLocations = [
-    { lat: -33.04290047293547, lng: -71.37418257573054 },
-    { lat: -33.04124735728023, lng: -71.44872249170893 },
-    { lat: -33.03478599734353, lng: -71.52534948029111 },
-    { lat: -33.03053401858401, lng: -71.5505661690838 },
-    { lat: -32.99827777078193, lng: -71.51340288074677 },
-    { lat: -33.03289027085978, lng: -71.57875485695166 },
-    { lat: -33.03430705527392, lng: -71.53362250045788 },
-    { lat: -32.92728765923738, lng: -71.52026045625792 },
-    { lat: -33.06591701871601, lng: -71.5874353439786 },
-    { lat: -33.06484339371251, lng: -71.58906829695106 },
-    { lat: -33.062816092731, lng: -71.59138880818396 },
-    { lat: -33.061171178586356, lng: -71.58650380948862 },
-    { lat: -33.057201281312175, lng: -71.58609906753166 },
-    { lat: -33.059503234106224, lng: -71.58487598024195 },
-  ];
 
   // Estilo personalizado del mapa (aquí puedes personalizar cada tipo de elemento ElementType)
   mapStyle = [
@@ -509,11 +493,15 @@ export class HomePage implements OnInit {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   findRecyclingCenters(keyword: string) {
+    this.clearMarkers(); // Limpiar los marcadores antes de agregar los nuevos
+
+
     const service = new this.googleMaps.places.PlacesService(this.map);
     const request = {
       location: new this.googleMaps.LatLng(this.center.lat, this.center.lng),
       radius: 10000, //radio de busqueda
-      keyword: keyword
+      keyword: keyword,
+      
     };
 
     service.nearbySearch(request, (results: any, status: any) => {
@@ -546,7 +534,11 @@ export class HomePage implements OnInit {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   search() {
-    this.findRecyclingCenters(this.searchKeyword);
+    if (this.searchKeyword   && this.searchKeyword  .trim().length > 0) {
+      this.findRecyclingCenters(this.searchKeyword  ); // Realiza la búsqueda con la searchKeyword
+    } else {
+      console.log('Por favor ingresa una palabra clave.');
+    }
   }
 
   // Función para agregar marcadores de puntos de reciclaje //
@@ -592,5 +584,26 @@ export class HomePage implements OnInit {
       });
     });
   }
+
+  onSearchInput(event: any) {
+    const inputValue = event.target.value;
+    if (inputValue && inputValue.trim().length > 0) {
+      this.searchKeyword   = inputValue;
+      this.search();  // Ejecuta la búsqueda cuando se escribe algo
+    }
+  }
+  
+  clearMarkers() {
+    this.markers.forEach(marker => marker.setMap(null)); // Elimina cada marcador del mapa
+    this.markers = []; // Limpiar el array de marcadores
+  }
+
+  clearSearch() {
+    this.searchKeyword   = '';
+    this.clearMarkers(); // Limpiar todos los marcadores
+    this.loadMap(); // Recargar el mapa
+  }
 }
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
