@@ -54,6 +54,20 @@ ion-menu::part(container) {
   box-shadow: 4px 0px 16px rgba(15, 63, 5, 0.075);
 }
 
+.search-container {
+  position: absolute;
+  top: 1px; /* Asegura que esté debajo del header */
+  left: 50%;
+  transform: translateX(-50%); /* Centra el buscador horizontalmente */
+  width: 80%; /* Ajusta el ancho del buscador */
+  z-index: 10; /* Coloca el buscador por encima del mapa */
+}
+
+ion-searchbar {
+  --border-radius: 20px; /* Bordes redondeados */
+  --background: #ffffff; /* Fondo blanco del buscador */
+  --box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
 
 
 

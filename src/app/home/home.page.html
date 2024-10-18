@@ -11,16 +11,19 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen>
+<ion-content>
+  <!-- barra de busqueda para el usuario -->
+  <div class="search-container">
+    <ion-searchbar [(ngModel)]="searchKeyword" placeholder="Buscar reciclaje..."></ion-searchbar>
+  </div>
+
 
   <div class="map" #map></div>
+
+
+
   <!-- Menú lateral (ion-menu) -->
   <ion-menu side="start" contentId="main-content">
-    <ion-header>
-      <ion-toolbar color="success">
-        <ion-title>Menú</ion-title>
-      </ion-toolbar>
-    </ion-header>
 
     <ion-content>
       <ion-list>
@@ -74,4 +77,7 @@
       </ion-fab-button>
     </ion-fab-list>
   </ion-fab>
+
+  <ion-button expand="full" (click)="search()">Buscar</ion-button>
+
 </ion-content>

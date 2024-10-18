@@ -14,8 +14,6 @@ import { AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
 
-
-
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -27,20 +25,21 @@ export class HomePage implements OnInit {
   center = { lat: -33.033779581976276, lng: -71.53313246449065 };
   map: any;
   isAuthenticated$: Observable<boolean>; // Cambiado para almacenar el estado de autenticación
+  searchKeyword: string = 'reciclaje';  // Palabra clave por defecto
 
   // Array hecho a mano de puntos de reciclaje (en futuras versiones esto sera una query a GoogleMapsPlaces consultando por los puntos limpios que hayan)
   recycleLocations = [
-    { lat: -33.04290047293547,  lng: -71.37418257573054 },
-    { lat: -33.04124735728023,  lng: -71.44872249170893 },
-    { lat: -33.03478599734353,  lng: -71.52534948029111 },
-    { lat: -33.03053401858401,  lng: -71.5505661690838  },
-    { lat: -32.99827777078193,  lng: -71.51340288074677 },
-    { lat: -33.03289027085978,  lng: -71.57875485695166 },
-    { lat: -33.03430705527392,  lng: -71.53362250045788 },
-    { lat: -32.92728765923738,  lng: -71.52026045625792 },
-    { lat: -33.06591701871601,  lng: -71.5874353439786  },
-    { lat: -33.06484339371251,  lng: -71.58906829695106 },
-    { lat: -33.062816092731,    lng: -71.59138880818396 },
+    { lat: -33.04290047293547, lng: -71.37418257573054 },
+    { lat: -33.04124735728023, lng: -71.44872249170893 },
+    { lat: -33.03478599734353, lng: -71.52534948029111 },
+    { lat: -33.03053401858401, lng: -71.5505661690838 },
+    { lat: -32.99827777078193, lng: -71.51340288074677 },
+    { lat: -33.03289027085978, lng: -71.57875485695166 },
+    { lat: -33.03430705527392, lng: -71.53362250045788 },
+    { lat: -32.92728765923738, lng: -71.52026045625792 },
+    { lat: -33.06591701871601, lng: -71.5874353439786 },
+    { lat: -33.06484339371251, lng: -71.58906829695106 },
+    { lat: -33.062816092731, lng: -71.59138880818396 },
     { lat: -33.061171178586356, lng: -71.58650380948862 },
     { lat: -33.057201281312175, lng: -71.58609906753166 },
     { lat: -33.059503234106224, lng: -71.58487598024195 },
@@ -130,9 +129,9 @@ export class HomePage implements OnInit {
       ],
     },
     {
-      featureType: 'poi',   // la feature 'poi' hace referencia a los puntos de interes
-                            // se refiere a todos los puntos de interes, educacion, parques, iglesias, hospitales, etc
-      elementType: 'all',   
+      featureType: 'poi', // la feature 'poi' hace referencia a los puntos de interes
+      // se refiere a todos los puntos de interes, educacion, parques, iglesias, hospitales, etc
+      elementType: 'all',
       stylers: [
         {
           visibility: 'off',
@@ -441,14 +440,39 @@ export class HomePage implements OnInit {
   // Este es el contructor de la HomPage (es lo que necesita la Page para poder funcionar correctamente)
   constructor(
     private modalController: ModalController, // el controller de los modals
-    private gmaps: GmapsService,    
-    private renderer: Renderer2,     // renderizar el mapa de la api de google maps
+    private gmaps: GmapsService,
+    private renderer: Renderer2, // renderizar el mapa de la api de google maps
     private authService: AuthService
-
-  ) {    this.isAuthenticated$ = this.authService.isAuthenticated(); // Asignar observable
+  ) {
+    this.isAuthenticated$ = this.authService.isAuthenticated(); // Asignar observable
   }
 
-  
+  // Este método verifica si el modal ya fue mostrado
+  async ngOnInit() {
+    // Verificar si el modal de bienvenida ya fue mostrado
+    const modalShown = localStorage.getItem('welcomeModalShown');
+
+    // Solicitar la ubicación actual del dispositivo
+    const position = await Geolocation.getCurrentPosition();
+    this.center = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+    };
+
+    // Si el modal no ha sido mostrado antes, mostrarlo y guardar el estado en LocalStorage
+    if (!modalShown) {
+      const modal = await this.modalController.create({
+        component: WelcomeModalComponent,
+      });
+      await modal.present();
+
+      // Guardar el estado en LocalStorage para no mostrarlo de nuevo
+      localStorage.setItem('welcomeModalShown', 'true');
+    }
+
+    // Cargar el mapa después de obtener la ubicación
+    this.loadMap();
+  }
 
   //Metodo con promesa Vacía
   ngAfterViewInit() {
@@ -456,8 +480,9 @@ export class HomePage implements OnInit {
   }
 
   // Funcion para mostrar el Mapa //
+  // Función para cargar el mapa
   async loadMap() {
-    let mapOptions = {
+    const mapOptions = {
       disableDefaultUI: true,
       clickableIcons: false,
       center: this.center,
@@ -466,37 +491,63 @@ export class HomePage implements OnInit {
     };
 
     try {
-      let googleMaps: any = await this.gmaps.loadGoogleMaps();
+      const googleMaps: any = await this.gmaps.loadGoogleMaps();
       this.googleMaps = googleMaps;
       const mapEl = this.mapElementRef?.nativeElement;
       this.map = new googleMaps.Map(mapEl, mapOptions);
       this.renderer.addClass(mapEl, 'visible');
 
-      // Añadir marcador de localización central (este pin será la geolocalización en futuras versiones)
-      this.addMarker(this.center, 'assets/icon/pin4.png');
+      // Añadir marcador de la ubicación del usuario
+      this.addMarker(this.center.lat, this.center.lng, 'assets/icon/pin4.png');
 
-      // Llamar a la función para agregar marcadores de reciclaje (llama al array)
-      this.addRecycleMarkers(this.recycleLocations);
+      // Llamar a la función para buscar puntos de reciclaje cercanos
+      this.findRecyclingCenters(this.searchKeyword);
     } catch (error) {
       console.log(error);
     }
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // Función para agregar el marcador de la ubicación central //
-  addMarker(location: { lat: number; lng: number }, iconUrl: string) {
-    let googleMaps: any = this.googleMaps;
-    const marker = new googleMaps.Marker({
-      position: location,
-      map: this.map,
-      icon: {
-        url: iconUrl, // Icono del pin central
-        scaledSize: new googleMaps.Size(50, 50), // Tamaño del icono
-      },
-      animation: googleMaps.Animation.DROP,
+  findRecyclingCenters(keyword: string) {
+    const service = new this.googleMaps.places.PlacesService(this.map);
+    const request = {
+      location: new this.googleMaps.LatLng(this.center.lat, this.center.lng),
+      radius: 10000, //radio de busqueda
+      keyword: keyword
+    };
+
+    service.nearbySearch(request, (results: any, status: any) => {
+      if (status === this.googleMaps.places.PlacesServiceStatus.OK) {
+        results.forEach((place: any) => {
+          this.addMarker(
+            place.geometry.location.lat(),
+            place.geometry.location.lng(),
+            'assets/icon/recopin4.png'
+          );
+        });
+      } else {
+        console.log('Error al buscar lugares:', status);
+      }
     });
   }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // Función para agregar el marcador de la ubicación central //
+  addMarker(lat: number, lng: number, iconUrl: string) {
+    const marker = new this.googleMaps.Marker({
+      position: { lat, lng },
+      map: this.map,
+      icon: {
+        url: iconUrl, // URL del icono personalizado
+        scaledSize: new this.googleMaps.Size(30, 30), // Tamaño del icono (ajústalo según lo necesites)
+      },
+      animation: this.googleMaps.Animation.DROP,
+    });
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  search() {
+    this.findRecyclingCenters(this.searchKeyword);
+  }
 
   // Función para agregar marcadores de puntos de reciclaje //
   addRecycleMarkers(locations: { lat: number; lng: number }[]) {
@@ -515,7 +566,7 @@ export class HomePage implements OnInit {
       });
     });
   }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Este método abre el modal de login
   async toggleAuthModal() {
@@ -540,25 +591,6 @@ export class HomePage implements OnInit {
         resolve(status);
       });
     });
-  }
-
-  // muestra el modal de bienvenida al cargar la página
-  async ngOnInit() {
-    // Solicitar la ubicación actual del dispositivo
-    const position = await Geolocation.getCurrentPosition();
-    this.center = {
-      lat: position.coords.latitude,
-      lng: position.coords.longitude,
-    };
-
-    // Después de obtener la ubicación actual, abrir el modal de bienvenida
-    const modal = await this.modalController.create({
-      component: WelcomeModalComponent,
-    });
-    await modal.present();
-
-    // Cargar el mapa después de obtener la ubicación
-    this.loadMap();
   }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

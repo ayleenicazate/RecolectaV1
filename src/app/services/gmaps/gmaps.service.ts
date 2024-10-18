@@ -21,7 +21,6 @@ export class GmapsService {
     const scriptAlreadyAdded = document.querySelector(`script[src*="maps.googleapis.com"]`) as HTMLScriptElement;
     if (scriptAlreadyAdded) {
       return new Promise((resolve, reject) => {
-        // Hacemos casting a HTMLScriptElement para que 'onload' y 'onerror' sean válidos
         scriptAlreadyAdded.onload = () => {
           resolve(gModule.maps);
         };
@@ -56,6 +55,27 @@ export class GmapsService {
       script.onerror = () => {
         reject('Error al cargar el script de Google Maps.');
       };
+    });
+  }
+
+  // Método para obtener lugares de reciclaje cercanos utilizando la biblioteca Places de Google Maps
+  getRecyclingCenters(map: any, location: { lat: number, lng: number }): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const service = new map.places.PlacesService(map);
+
+      const request = {
+        location: new map.LatLng(location.lat, location.lng),  // Latitud y longitud del lugar de búsqueda
+        radius: 5000,  // Radio de búsqueda en metros
+        keyword: 'reciclaje'  // Término de búsqueda (puedes usar "recycling center" también)
+      };
+
+      service.nearbySearch(request, (results: any, status: any) => {
+        if (status === map.places.PlacesServiceStatus.OK) {
+          resolve(results);  // Devuelve los resultados
+        } else {
+          reject('Error al buscar puntos de reciclaje: ' + status);
+        }
+      });
     });
   }
 }
