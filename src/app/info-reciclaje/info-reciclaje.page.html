@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-toolbar color="success">
+    <ion-title>Materiales Reciclables</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-slides [options]="slideOpts" pager="true">
+    <!-- Primera Card -->
+    <ion-slide>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Papel</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>Cantidad mínima: 1 kg</p>
+          <p>Debe estar limpio y sin restos de comida.</p>
+          <img src="assets/img/paper.gif" alt="Imagen de plástico reciclable">
+        </ion-card-content>
+      </ion-card>
+    </ion-slide>
+
+    <!-- Segunda Card -->
+    <ion-slide>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Vidrio</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>Cantidad mínima: 500 g</p>
+          <p>Debe estar limpio, sin tapas ni etiquetas.</p>
+          <img src="assets/img/glass.gif" alt="Imagen de vidrio reciclable">
+        </ion-card-content>
+      </ion-card>
+    </ion-slide>
+
+    <!-- Tercera Card -->
+    <ion-slide>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Plástico</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>Cantidad mínima: 2 kg</p>
+          <p>Debe estar limpio y sin etiquetas.</p>
+          <!-- Aquí colocas la imagen -->
+          <img src="assets/img/plastic.gif" alt="Imagen de plástico reciclable">
+        </ion-card-content>
+      </ion-card>
+    </ion-slide>
+    
+
+    <!-- Cuarta Card -->
+    <ion-slide>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Metal</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>Cantidad mínima: 1 kg</p>
+          <p>Debe estar limpio y aplastado.</p>
+          <img src="assets/img/metal.gif" alt="Imagen de vidrio reciclable">
+        </ion-card-content>
+      </ion-card>
+    </ion-slide>
+  </ion-slides>
+
+</ion-content>
+

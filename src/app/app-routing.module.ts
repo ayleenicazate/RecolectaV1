@@ -23,7 +23,11 @@ const routes: Routes = [
   {
     path: 'login-modal',
     loadChildren: () => import('./login-modal/resetpass/resetpass.module').then( m => m.ResetpassPageModule)
+  },  {
+    path: 'info-reciclaje',
+    loadChildren: () => import('./info-reciclaje/info-reciclaje.module').then( m => m.InfoReciclajePageModule)
   },
+
 
 ];
 
