@@ -8,6 +8,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { WelcomeModalComponent } from './welcome-modal/welcome-modal.component'; 
 
+import { AuthService } from './services/auth.service';
+import { FirestoreService } from './services/firestore.service';
+
+
 // Firebase imports
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';  // Para autenticación
@@ -29,7 +33,7 @@ import { LoginModalModule } from './login-modal/login-modal.module';
     IonicModule.forRoot(),
     AppRoutingModule,
     ReactiveFormsModule,
-    LoginModalModule,  // Añade LoginModalModule aquí
+    LoginModalModule,
 
     // Inicialización de Firebase
     AngularFireModule.initializeApp(environment.firebaseConfig),  // Inicializa Firebase con tus credenciales
@@ -38,7 +42,9 @@ import { LoginModalModule } from './login-modal/login-modal.module';
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, 
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    AuthService,
+    FirestoreService,
   ],
   bootstrap: [AppComponent]
 })

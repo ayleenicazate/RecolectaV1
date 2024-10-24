@@ -42,7 +42,7 @@ export class RegistroPage implements OnInit {
           this.myForm.get('email')?.setErrors({ emailTaken: true });
           return; 
         }
-
+  
         // Verifica si el nombre de usuario ya está registrado
         const usernameExistente = await this.firestoreService.checkUsernameExists(username);
         if (usernameExistente) {
@@ -51,26 +51,29 @@ export class RegistroPage implements OnInit {
         }
   
         // Registra al usuario en Firebase Authentication
-        const user = await this.authService.register(email, password);
+        const userCredential = await this.authService.register(email, password);
   
         // Verifica que el usuario fue creado
-        if (user) {
+        if (userCredential && userCredential.user) {
+          const uid = userCredential.user.uid; // Obtenemos el UID del usuario registrado en Firebase Auth
+  
+          // Crea el objeto del nuevo usuario con el UID como parte de los datos
           const newUser = {
             nombre: name,
             correo: email,
             username: username,
             telefono: phone,
-            id: user.uid 
+            id: uid // Usamos el UID como el ID del documento en Firestore
           };
   
-          // Guarda el usuario en Firestore
-          await this.firestoreService.createUsuario(newUser);
-          console.log('Usuario añadido con éxito:', newUser);
+          // Guarda el usuario en Firestore usando el UID como ID
+          await this.firestoreService.createUsuario(uid, newUser);
+          console.log('Usuario añadido con éxito en Firestore:', newUser);
   
           // Navega a la página principal
           this.navController.navigateRoot('/home');
         } else {
-          console.error('No se pudo registrar al usuario.');
+          console.error('No se pudo registrar al usuario en Firebase Authentication.');
         }
       } catch (error) {
         console.error('Error al registrar el usuario:', error);

@@ -3,6 +3,9 @@ import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';  // Importa el servicio de autenticación
 import { IonicModule } from '@ionic/angular';  // Importa IonicModule
+import { FirebaseError } from 'firebase/app';
+import { FirestoreService } from '../../services/firestore.service'; // Asegúrate de tener este servicio
+
 
 
 @Component({
@@ -18,7 +21,9 @@ export class LogeadoModalComponent implements OnInit {
   constructor(
     private modalController: ModalController,
     private router: Router,
-    private authService: AuthService  // Inyecta el servicio de autenticación
+    private authService: AuthService,  // Inyecta el servicio de autenticación
+    private fireStoreService: FirestoreService
+
   ) {}
 
   ngOnInit() {
@@ -50,4 +55,43 @@ export class LogeadoModalComponent implements OnInit {
       console.error('Error al cerrar sesión:', error);
     });
   }
+
+  async confirmDeleteAccount() {
+    const confirmDelete = confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.');
+    if (confirmDelete) {
+      try {
+        const password = prompt('Por favor, introduce tu contraseña para confirmar la eliminación de la cuenta:');
+        if (password) {
+          // Reautentica al usuario
+          const credential = await this.authService.reauthenticate(this.userEmail, password);
+          
+          // Elimina la cuenta de Firebase Auth
+          await this.authService.deleteAccount();
+  
+          // Asegúrate de que el UID esté disponible
+          const userUID = credential?.user?.uid;
+          if (userUID) {
+            // Elimina el usuario de Firestore usando el UID
+            await this.fireStoreService.deleteUserFromFirestore(userUID);
+            alert('Cuenta eliminada con éxito');
+          } else {
+            alert('No se pudo obtener el UID del usuario para eliminar de Firestore.');
+          }
+  
+          this.dismissModal();
+          this.router.navigate(['/login']);
+        } else {
+          alert('Eliminación de cuenta cancelada.');
+        }
+      } catch (error) {
+        if (error instanceof FirebaseError && error.code === 'auth/wrong-password') {
+          alert('Contraseña incorrecta. Intenta de nuevo.');
+        } else {
+          alert('Error al eliminar la cuenta. Intenta nuevamente.');
+          console.error('Error:', error);
+        }
+      }
+    }
+  }
 }
+

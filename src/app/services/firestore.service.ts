@@ -11,8 +11,8 @@ export class FirestoreService {
 
   constructor(private firestore: AngularFirestore) {}
 
-  createUsuario(usuario: any): Promise<any> {
-    return this.firestore.collection('usuarios').add(usuario)
+  createUsuario(uid: string, usuario: any): Promise<void> {
+    return this.firestore.collection('usuarios').doc(uid).set(usuario)
       .then(() => {
         console.log('Usuario registrado en Firestore correctamente');
       })
@@ -58,4 +58,9 @@ checkUsernameExists(username: string): Promise<boolean> {
       return snapshot ? !snapshot.empty : false; // Retorna true si se encontró un username
     });
   }
-}
+
+    // Elimina al usuario de Firestore basado en el UID
+    async deleteUserFromFirestore(uid: string): Promise<void> {
+      return this.firestore.collection('usuarios').doc(uid).delete();
+    }
+  }
