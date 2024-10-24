@@ -74,6 +74,11 @@ export class AuthService {
     );
   }
 
+  async getCurrentUserUid(): Promise<string | null> {
+    const user = await this.afAuth.currentUser;
+    return user ? user.uid : null;
+  }
+
   async deleteAccount(): Promise<void> {
     const user = await this.afAuth.currentUser;
     if (user) {
@@ -82,5 +87,7 @@ export class AuthService {
       throw new Error('No hay un usuario autenticado.');
     }
   }
+
+  
 
 }

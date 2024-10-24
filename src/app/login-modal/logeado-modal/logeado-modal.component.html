@@ -17,6 +17,18 @@
     <ion-button (click)="changeProfilePicture()">Cambiar Foto</ion-button>
   </div>
 
+  <ion-item>
+    <ion-label position="floating">Teléfono</ion-label>
+    <ion-input [(ngModel)]="userPhone" type="tel" maxlength="9" placeholder="Introduce tu número de teléfono"></ion-input>
+  </ion-item>
+
+  <!-- Mensaje de error si hay un problema con el teléfono -->
+  <p *ngIf="phoneErrorMessage" style="color: red;">{{ phoneErrorMessage }}</p>
+
+  <!-- Mensaje de éxito si el número se actualiza correctamente -->
+  <p *ngIf="successMessage" style="color: green;">{{ successMessage }}</p>
+
+  <ion-button expand="block" (click)="updatePhone()">Actualizar Número</ion-button>
   <ion-button expand="block" (click)="logout()">Cerrar Sesión</ion-button>
   <ion-button expand="block" color="danger" (click)="confirmDeleteAccount()">Eliminar Cuenta</ion-button>
 </ion-content>

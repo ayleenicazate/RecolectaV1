@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/auth.service'; 
+
 
 
 @Injectable({
@@ -9,7 +11,7 @@ import { map } from 'rxjs/operators';
 })
 export class FirestoreService {
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: AngularFirestore, private authService: AuthService) {}
 
   createUsuario(uid: string, usuario: any): Promise<void> {
     return this.firestore.collection('usuarios').doc(uid).set(usuario)
@@ -49,6 +51,15 @@ export class FirestoreService {
       });
   }
 
+  async updateUsuarioPhone(phone: string): Promise<void> {
+    const uid = await this.authService.getCurrentUserUid();
+    if (uid) {
+      return this.firestore.collection('usuarios').doc(uid).update({ telefono: phone });
+    } else {
+      throw new Error('No hay un usuario autenticado.');
+    }
+  }
+  
 //PARA VALIDAR SI EL USUARIO EXISTE YA EN LA BASE DE DATOS.
 checkUsernameExists(username: string): Promise<boolean> {
   return this.firestore.collection('usuarios', ref => ref.where('username', '==', username))

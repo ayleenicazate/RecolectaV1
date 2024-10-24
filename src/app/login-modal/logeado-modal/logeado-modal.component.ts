@@ -17,6 +17,11 @@ export class LogeadoModalComponent implements OnInit {
   userProfileImage: string = 'path/to/default-profile-image.jpg';  // Ruta de imagen de perfil predeterminada
   userName: string = ''; // Para mostrar el nombre del usuario
   userEmail: string = ''; // Para mostrar el correo del usuario
+  userPhone: string = '';  
+  successMessage: string = ''; // Para mostrar mensajes de éxito
+  phoneErrorMessage: string = ''; // Para mostrar mensajes de error
+
+
 
   constructor(
     private modalController: ModalController,
@@ -45,6 +50,28 @@ export class LogeadoModalComponent implements OnInit {
     // Implementa la lógica para cambiar la foto de perfil
     console.log('Cambiar foto de perfil');
     // Aquí podrías abrir un selector de archivos y actualizar la foto de perfil
+  }
+
+  // Método para actualizar el número de teléfono
+  async updatePhone() {
+    this.phoneErrorMessage = ''; // Limpia el mensaje de error
+    this.successMessage = ''; // Limpia el mensaje de éxito
+
+    // Validar que el número de teléfono tenga 9 dígitos y solo contenga números
+    const phonePattern = /^\d{9}$/;
+    if (!phonePattern.test(this.userPhone)) {
+      this.phoneErrorMessage = 'El número de teléfono debe tener exactamente 9 dígitos.';
+      return;
+    }
+
+    try {
+      // Actualizar el teléfono en Firestore
+      await this.fireStoreService.updateUsuarioPhone(this.userPhone);
+      this.successMessage = 'Número de teléfono actualizado correctamente.';
+    } catch (error) {
+      console.error('Error al actualizar el número de teléfono:', error);
+      this.phoneErrorMessage = 'Hubo un error al actualizar el número. Intenta de nuevo.';
+    }
   }
 
   logout() {
