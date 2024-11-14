@@ -4,11 +4,13 @@ import firebase from 'firebase/compat/app';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { UserCredential } from 'firebase/auth';
+import { getAuth, updateProfile } from 'firebase/auth'; 
 
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class AuthService {
   user$: Observable<firebase.User | null>;
   authState$: any;
@@ -18,6 +20,7 @@ export class AuthService {
       switchMap(user => of(user))
     );
   }
+
 
   // Método para reautenticar al usuario
   async reauthenticate(email: string, password: string): Promise<firebase.auth.UserCredential> {
@@ -88,6 +91,21 @@ export class AuthService {
     }
   }
 
+   // Método para actualizar la imagen de perfil del usuario
+   async updateUserProfileImage(photoURL: string): Promise<void> {
+    const user = await this.afAuth.currentUser;
+    if (user) {
+      await user.updateProfile({ photoURL });
+    } else {
+      throw new Error('No hay un usuario autenticado');
+    }
+  }
+  
+
+  async getCurrentUserId(): Promise<string | null> {
+    const user = await this.afAuth.currentUser;
+    return user ? user.uid : null;
+  }
   
 
 }

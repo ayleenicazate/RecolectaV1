@@ -8,10 +8,10 @@ import {
 import { ModalController } from '@ionic/angular';
 import { LoginModalComponent } from '../login-modal/login-modal.component';
 import { LogeadoModalComponent } from '../login-modal/logeado-modal/logeado-modal.component';
-import { WelcomeModalComponent } from '../welcome-modal/welcome-modal.component'; // Importa el modal de bienvenida
+import { WelcomeModalComponent } from '../welcome-modal/welcome-modal.component';
 import { GmapsService } from '../services/gmaps/gmaps.service';
 import { AuthService } from '../services/auth.service';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
@@ -24,10 +24,9 @@ export class HomePage implements OnInit {
   googleMaps: any;
   center = { lat: -33.033779581976276, lng: -71.53313246449065 };
   map: any;
-  isAuthenticated$: Observable<boolean>; // Cambiado para almacenar el estado de autenticación
-  searchKeyword: string = ''; // Palabra clave por defecto
-  markers: any[] = []; // Array para almacenar los marcadores
-
+  isAuthenticated$: Observable<boolean>;
+  searchKeyword: string = 'Punto limpio';
+  markers: any[] = [];
 
   // Estilo personalizado del mapa (aquí puedes personalizar cada tipo de elemento ElementType)
   mapStyle = [
@@ -421,50 +420,46 @@ export class HomePage implements OnInit {
     },
   ];
 
-  // Este es el contructor de la HomPage (es lo que necesita la Page para poder funcionar correctamente)
   constructor(
-    private modalController: ModalController, // el controller de los modals
+    private modalController: ModalController,
     private gmaps: GmapsService,
-    private renderer: Renderer2, // renderizar el mapa de la api de google maps
+    private renderer: Renderer2,
     private authService: AuthService
   ) {
-    this.isAuthenticated$ = this.authService.isAuthenticated(); // Asignar observable
+    this.isAuthenticated$ = this.authService.isAuthenticated();
   }
 
-  // Este método verifica si el modal ya fue mostrado
   async ngOnInit() {
-    // Verificar si el modal de bienvenida ya fue mostrado
     const modalShown = localStorage.getItem('welcomeModalShown');
-
-    // Solicitar la ubicación actual del dispositivo
-    const position = await Geolocation.getCurrentPosition();
-    this.center = {
-      lat: position.coords.latitude,
-      lng: position.coords.longitude,
-    };
-
-    // Si el modal no ha sido mostrado antes, mostrarlo y guardar el estado en LocalStorage
     if (!modalShown) {
-      const modal = await this.modalController.create({
-        component: WelcomeModalComponent,
-      });
-      await modal.present();
-
-      // Guardar el estado en LocalStorage para no mostrarlo de nuevo
+      await this.showWelcomeModal();
       localStorage.setItem('welcomeModalShown', 'true');
     }
 
-    // Cargar el mapa después de obtener la ubicación
-    this.loadMap();
+    this.initializeMap();
   }
 
-  //Metodo con promesa Vacía
-  ngAfterViewInit() {
-    this.loadMap();
-  }
+  async initializeMap() {
+    try {
+        // Obtener la posición actual y actualizar el centro
+        const position = await Geolocation.getCurrentPosition();
+        this.center = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+        };
+        
+        // Cargar el mapa después de establecer la posición
+        await this.loadMap();
 
-  // Funcion para mostrar el Mapa //
-  // Función para cargar el mapa
+        // Añadir el marcador de la ubicación del usuario después de cargar el mapa
+        this.addMarker(this.center.lat, this.center.lng, 'assets/icon/pin4.png');
+        
+    } catch (error) {
+        console.error('Error al obtener la ubicación:', error);
+    }
+}
+
+
   async loadMap() {
     const mapOptions = {
       disableDefaultUI: true,
@@ -475,43 +470,40 @@ export class HomePage implements OnInit {
     };
 
     try {
-      const googleMaps: any = await this.gmaps.loadGoogleMaps();
+      const googleMaps = await this.gmaps.loadGoogleMaps();
       this.googleMaps = googleMaps;
       const mapEl = this.mapElementRef?.nativeElement;
       this.map = new googleMaps.Map(mapEl, mapOptions);
       this.renderer.addClass(mapEl, 'visible');
+      this.addMarker(this.center.lat, this.center.lng, 'assets/icon/pin4.png', { width: 50, height: 50 });
 
-      // Añadir marcador de la ubicación del usuario
-      this.addMarker(this.center.lat, this.center.lng, 'assets/icon/pin4.png');
-
-      // Llamar a la función para buscar puntos de reciclaje cercanos
       this.findRecyclingCenters(this.searchKeyword);
+
     } catch (error) {
-      console.log(error);
+      console.log('Error al cargar el mapa:', error);
     }
   }
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  async showWelcomeModal() {
+    const modal = await this.modalController.create({
+      component: WelcomeModalComponent,
+    });
+    await modal.present();
+  }
 
   findRecyclingCenters(keyword: string) {
-    this.clearMarkers(); // Limpiar los marcadores antes de agregar los nuevos
-
-
+    this.clearMarkers();
     const service = new this.googleMaps.places.PlacesService(this.map);
     const request = {
       location: new this.googleMaps.LatLng(this.center.lat, this.center.lng),
-      radius: 10000, //radio de busqueda
+      radius: 50000,
       keyword: keyword,
-      
     };
 
     service.nearbySearch(request, (results: any, status: any) => {
       if (status === this.googleMaps.places.PlacesServiceStatus.OK) {
         results.forEach((place: any) => {
-          this.addMarker(
-            place.geometry.location.lat(),
-            place.geometry.location.lng(),
-            'assets/icon/recopin4.png'
-          );
+          this.addMarker(place.geometry.location.lat(), place.geometry.location.lng(), 'assets/icon/recopin4.png', { width: 30, height: 30 });
         });
       } else {
         console.log('Error al buscar lugares:', status);
@@ -519,91 +511,55 @@ export class HomePage implements OnInit {
     });
   }
 
-  // Función para agregar el marcador de la ubicación central //
-  addMarker(lat: number, lng: number, iconUrl: string) {
+  addMarker(lat: number, lng: number, iconUrl: string, size: { width: number; height: number } = { width: 30, height: 30 }) {
     const marker = new this.googleMaps.Marker({
-      position: { lat, lng },
-      map: this.map,
-      icon: {
-        url: iconUrl, // URL del icono personalizado
-        scaledSize: new this.googleMaps.Size(30, 30), // Tamaño del icono (ajústalo según lo necesites)
-      },
-      animation: this.googleMaps.Animation.DROP,
+        position: { lat, lng },
+        map: this.map,
+        icon: {
+            url: iconUrl,
+            scaledSize: new this.googleMaps.Size(size.width, size.height), // Ajusta el tamaño según los parámetros
+        },
+        animation: this.googleMaps.Animation.DROP,
     });
+    this.markers.push(marker);
+}
+
+  async toggleAuthModal() {
+    const isAuthenticated = await this.getAuthenticationStatus();
+    const component = isAuthenticated ? LogeadoModalComponent : LoginModalComponent;
+    const modal = await this.modalController.create({ component });
+    await modal.present();
   }
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  private async getAuthenticationStatus(): Promise<boolean> {
+    return firstValueFrom(this.isAuthenticated$);
+  }
+  
+
+  onSearchInput(event: any) {
+    const inputValue = event.target.value;
+    if (inputValue && inputValue.trim().length > 0) {
+      this.searchKeyword = inputValue;
+      this.search();
+    }
+  }
 
   search() {
-    if (this.searchKeyword   && this.searchKeyword  .trim().length > 0) {
-      this.findRecyclingCenters(this.searchKeyword  ); // Realiza la búsqueda con la searchKeyword
+    if (this.searchKeyword.trim()) {
+      this.findRecyclingCenters(this.searchKeyword);
     } else {
       console.log('Por favor ingresa una palabra clave.');
     }
   }
 
-  // Función para agregar marcadores de puntos de reciclaje //
-  addRecycleMarkers(locations: { lat: number; lng: number }[]) {
-    let googleMaps: any = this.googleMaps;
-
-    // Recorre el array de ubicaciones y agrega un marcador para cada punto de reciclaje
-    locations.forEach((location) => {
-      const recycleMarker = new googleMaps.Marker({
-        position: { lat: location.lat, lng: location.lng },
-        map: this.map,
-        icon: {
-          url: 'assets/icon/recopin4.png', // icono personalizado
-          scaledSize: new googleMaps.Size(30, 30), // tamaño de vista del icono
-        },
-        animation: googleMaps.Animation.NULL,
-      });
-    });
-  }
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // Este método abre el modal de login
-  async toggleAuthModal() {
-    const isAuthenticated = await this.getAuthenticationStatus(); // Obtener el estado de autenticación
-
-    if (isAuthenticated) {
-      const modal = await this.modalController.create({
-        component: LogeadoModalComponent,
-      });
-      await modal.present();
-    } else {
-      const modal = await this.modalController.create({
-        component: LoginModalComponent,
-      });
-      await modal.present();
-    }
-  }
-
-  private async getAuthenticationStatus(): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.isAuthenticated$.subscribe((status) => {
-        resolve(status);
-      });
-    });
-  }
-
-  onSearchInput(event: any) {
-    const inputValue = event.target.value;
-    if (inputValue && inputValue.trim().length > 0) {
-      this.searchKeyword   = inputValue;
-      this.search();  // Ejecuta la búsqueda cuando se escribe algo
-    }
-  }
-  
   clearMarkers() {
-    this.markers.forEach(marker => marker.setMap(null)); // Elimina cada marcador del mapa
-    this.markers = []; // Limpiar el array de marcadores
+    this.markers.forEach(marker => marker.setMap(null));
+    this.markers = [];
   }
 
   clearSearch() {
-    this.searchKeyword   = '';
-    this.clearMarkers(); // Limpiar todos los marcadores
-    this.loadMap(); // Recargar el mapa
+    this.searchKeyword = '';
+    this.clearMarkers();
+    this.loadMap();
   }
 }
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

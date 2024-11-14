@@ -5,6 +5,9 @@ import { AuthService } from '../../services/auth.service';  // Importa el servic
 import { IonicModule } from '@ionic/angular';  // Importa IonicModule
 import { FirebaseError } from 'firebase/app';
 import { FirestoreService } from '../../services/firestore.service'; // Asegúrate de tener este servicio
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage'; // Importa Firebase Storage
+
 
 
 
@@ -46,10 +49,34 @@ export class LogeadoModalComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  changeProfilePicture() {
-    // Implementa la lógica para cambiar la foto de perfil
-    console.log('Cambiar foto de perfil');
-    // Aquí podrías abrir un selector de archivos y actualizar la foto de perfil
+  async changeProfilePicture() {
+    console.log("Botón 'Cambiar Foto' presionado"); // Verificación de ejecución
+
+
+    try {
+      // Llamada a la cámara o galería
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Prompt, // Permite seleccionar entre cámara y galería
+      });
+
+      if (image && image.dataUrl) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `profile_pictures/${this.authService.getCurrentUserId()}.jpg`);
+        await uploadString(storageRef, image.dataUrl, 'data_url'); // Subir la imagen a Firebase Storage
+        const downloadURL = await getDownloadURL(storageRef); // Obtener la URL de descarga
+
+        // Actualizar la imagen de perfil del usuario en Firebase Authentication
+        await this.authService.updateUserProfileImage(downloadURL);
+        this.userProfileImage = downloadURL; // Actualizar la imagen de perfil en la interfaz
+        this.successMessage = 'Foto de perfil actualizada con éxito.';
+      }
+    } catch (error) {
+      console.error('Error al cambiar la foto de perfil:', error);
+      this.phoneErrorMessage = 'Hubo un problema al actualizar la foto de perfil. Intenta de nuevo.';
+    }
   }
 
   // Método para actualizar el número de teléfono
