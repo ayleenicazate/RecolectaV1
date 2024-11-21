@@ -27,13 +27,14 @@ export class RegistroPage implements OnInit {
       email: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|cl)$/)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       username: ['', [Validators.required, Validators.minLength(3)]], 
-      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]] 
+      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
+      userType: ['', [Validators.required]] // Nuevo campo: Tipo de usuario
     });
   }
 
   async onSubmit() {
     if (this.myForm.valid) {
-      const { name, email, password, username, phone } = this.myForm.value;
+      const { name, email, password, username, phone, userType } = this.myForm.value; // Incluye userType
   
       try {
         // Verifica si el correo ya está registrado en Firestore
@@ -63,6 +64,7 @@ export class RegistroPage implements OnInit {
             correo: email,
             username: username,
             telefono: phone,
+            tipoUsuario: userType, // Guarda el tipo de usuario
             id: uid // Usamos el UID como el ID del documento en Firestore
           };
   

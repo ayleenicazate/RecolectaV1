@@ -1,17 +1,15 @@
 <ion-header>
   <ion-toolbar color="success">
-
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-
     <ion-title>Registro de usuario</ion-title>
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content>
   <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+    <!-- Nombre -->
     <ion-item>
       <ion-label position="floating">Nombre</ion-label>
       <ion-input formControlName="name"></ion-input>
@@ -22,6 +20,8 @@
         <p *ngIf="myForm.get('name')?.errors?.['minlength']">El nombre debe tener mínimo 3 letras.</p>
       </ion-text>
     </div>
+
+    <!-- Usuario -->
     <ion-item>
       <ion-label position="floating">Usuario</ion-label>
       <ion-input formControlName="username"></ion-input>
@@ -32,6 +32,8 @@
         <p *ngIf="myForm.get('username')?.errors?.['usernameTaken']">El usuario ya está ocupado.</p>
       </ion-text>
     </div>
+
+    <!-- Correo -->
     <ion-item>
       <ion-label position="floating">Correo</ion-label>
       <ion-input formControlName="email"></ion-input>
@@ -43,6 +45,8 @@
         <p *ngIf="myForm.get('email')?.errors?.['emailTaken']">El correo ya está registrado.</p>
       </ion-text>
     </div>
+
+    <!-- Teléfono -->
     <ion-item>
       <ion-label position="floating">Teléfono</ion-label>
       <ion-input formControlName="phone" type="tel"></ion-input>
@@ -51,6 +55,20 @@
       <ion-text color="danger">
         <p *ngIf="myForm.get('phone')?.errors?.['required']">El teléfono es obligatorio.</p>
         <p *ngIf="myForm.get('phone')?.errors?.['pattern']">El teléfono debe tener 9 dígitos.</p>
+      </ion-text>
+    </div>
+
+    <!-- Tipo de Usuario -->
+    <ion-item>
+      <ion-label>Tipo de Usuario</ion-label>
+      <ion-select formControlName="userType">
+        <ion-select-option value="cliente">Cliente</ion-select-option>
+        <ion-select-option value="recolector">Recolector</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div *ngIf="myForm.get('userType')?.invalid && myForm.get('userType')?.touched">
+      <ion-text color="danger">
+        <p *ngIf="myForm.get('userType')?.errors?.['required']">El tipo de usuario es obligatorio.</p>
       </ion-text>
     </div>
 
@@ -66,6 +84,7 @@
       </ion-text>
     </div>
 
+    <!-- Botón de registro -->
     <ion-button expand="full" type="submit" [disabled]="myForm.invalid">Registrarme</ion-button>
   </form>
 </ion-content>
