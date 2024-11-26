@@ -18,6 +18,7 @@
       [(ngModel)]="searchKeyword"
       placeholder="Buscar reciclaje..."
       (ionInput)="onSearchInput($event)"
+      [disabled]="!(isAuthenticated$ | async)"
       (ionClear)="clearSearch()"
     ></ion-searchbar>
   </div>

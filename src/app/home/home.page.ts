@@ -13,6 +13,7 @@ import { GmapsService } from '../services/gmaps/gmaps.service';
 import { AuthService } from '../services/auth.service';
 import { Observable, firstValueFrom } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -25,7 +26,7 @@ export class HomePage implements OnInit {
   center = { lat: -33.033779581976276, lng: -71.53313246449065 };
   map: any;
   isAuthenticated$: Observable<boolean>;
-  searchKeyword: string = 'Punto limpio';
+  searchKeyword: string = '';
   markers: any[] = [];
 
   // Estilo personalizado del mapa (aquí puedes personalizar cada tipo de elemento ElementType)
@@ -421,6 +422,7 @@ export class HomePage implements OnInit {
   ];
 
   constructor(
+    private toastController: ToastController,
     private modalController: ModalController,
     private gmaps: GmapsService,
     private renderer: Renderer2,
@@ -511,7 +513,11 @@ export class HomePage implements OnInit {
     });
   }
 
-  addMarker(lat: number, lng: number, iconUrl: string, size: { width: number; height: number } = { width: 30, height: 30 }) {
+  addMarker(
+    lat: number, 
+    lng: number, 
+    iconUrl: string, 
+    size: { width: number; height: number } = { width: 30, height: 30 }) {
     const marker = new this.googleMaps.Marker({
         position: { lat, lng },
         map: this.map,
@@ -544,7 +550,25 @@ export class HomePage implements OnInit {
     }
   }
 
-  search() {
+  async showLoginWarning() {
+    const toast = await this.toastController.create({
+      message: 'Debes estar registrado para usar esta función.',
+      duration: 3000, // Tiempo de duración en milisegundos
+      position: 'top', // Posición en la pantalla
+      color: 'warning', // Color del toast
+    });
+    await toast.present();
+  }
+  
+  async search() {
+    const isAuthenticated = await this.getAuthenticationStatus();
+
+    if (!isAuthenticated) {
+      await this.showLoginWarning();
+      await this.toggleAuthModal(); // Abre el modal de login
+      return; // Salir de la función si no está autenticado
+    }
+
     if (this.searchKeyword.trim()) {
       this.findRecyclingCenters(this.searchKeyword);
     } else {
