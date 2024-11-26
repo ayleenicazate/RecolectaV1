@@ -22,7 +22,10 @@
 
     <ion-item>
       <ion-label position="floating">Clave</ion-label>
-      <ion-input type="password" formControlName="password"></ion-input>
+      <ion-input type="password" formControlName="password">
+        <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+      </ion-input>
+    
     </ion-item>
     <div *ngIf="myForm.get('password')?.invalid && myForm.get('password')?.touched">
       <ion-text color="danger">
