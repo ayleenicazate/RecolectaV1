@@ -70,6 +70,16 @@ export class AuthService {
     return this.user$;
   }
 
+  async resetPassword(email: string): Promise<void> {
+    try {
+      await this.afAuth.sendPasswordResetEmail(email);
+      console.log('Correo de restablecimiento enviado exitosamente.');
+    } catch (error) {
+      console.error('Error al enviar el correo de restablecimiento:', error);
+      throw error;
+    }
+  }
+
   // Método para verificar si el usuario está autenticado
   isAuthenticated(): Observable<boolean> {
     return this.afAuth.authState.pipe(

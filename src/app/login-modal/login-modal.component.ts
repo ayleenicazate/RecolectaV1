@@ -4,7 +4,6 @@ import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';  // Importa el servicio de autenticación
 
-
 @Component({
   selector: 'app-login-modal',
   templateUrl: './login-modal.component.html',
@@ -32,10 +31,17 @@ export class LoginModalComponent implements OnInit {
     this.router.navigate(['/registro']);
   }
 
-  // Navega a la página de restablecimiento de contraseña
-  async resetPass() {
-    this.dismissModal(); // Cierra el modal
-    this.router.navigate(['/resetpass']);
+  // Método para restablecer la contraseña
+  async resetPassword() {
+    const email = prompt('Por favor, ingresa tu correo electrónico:');
+    if (email) {
+      try {
+        await this.authService.resetPassword(email);
+        alert('Correo de restablecimiento enviado exitosamente.');
+      } catch (error) {
+        alert('Error al enviar el correo de restablecimiento.');
+      }
+    }
   }
 
   ngOnInit() {
@@ -49,7 +55,7 @@ export class LoginModalComponent implements OnInit {
     if (this.myForm.valid) {
       this.isLoading = true;
       const { email, password } = this.myForm.value;
-  
+
       this.authService.login(email, password).then((user) => { // Agrega user para manejar el ID
         this.isLoading = false;
         if (user) {
