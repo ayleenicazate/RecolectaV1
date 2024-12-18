@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="success">
+    <ion-title>Solicitar Recolección</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="recollectionForm">
+    <!-- Lista de materiales reciclables -->
+    <ion-list>
+      <ion-list-header>
+        <ion-label>Selecciona los materiales a reciclar:</ion-label>
+      </ion-list-header>
+
+      <ion-item *ngFor="let material of materials">
+        <ion-checkbox slot="start" [(ngModel)]="material.selected"></ion-checkbox>
+        <ion-label>{{ material.name }}</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!-- Peso aproximado -->
+    <ion-item>
+      <ion-label position="stacked">Peso aproximado (kg)</ion-label>
+      <ion-input type="number" formControlName="weight"></ion-input>
+    </ion-item>
+
+    <!-- Botón de envío -->
+    <ion-button expand="block" color="success" (click)="submitForm()">Enviar</ion-button>
+  </form>
+</ion-content>

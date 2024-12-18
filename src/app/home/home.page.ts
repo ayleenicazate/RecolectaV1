@@ -14,6 +14,8 @@ import { AuthService } from '../services/auth.service';
 import { Observable, firstValueFrom } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
 import { ToastController } from '@ionic/angular';
+import { RecollectionModalComponent } from '../recollection-modal/recollection-modal.component';
+
 
 @Component({
   selector: 'app-home',
@@ -461,6 +463,28 @@ export class HomePage implements OnInit {
     }
 }
 
+drawRoute(origin: { lat: number; lng: number }, destination: { lat: number; lng: number }) {
+  const directionsService = new this.googleMaps.DirectionsService();
+  const directionsRenderer = new this.googleMaps.DirectionsRenderer();
+  directionsRenderer.setMap(this.map);
+
+  const request: google.maps.DirectionsRequest = {
+    origin: new this.googleMaps.LatLng(origin.lat, origin.lng),
+    destination: new this.googleMaps.LatLng(destination.lat, destination.lng),
+    travelMode: this.googleMaps.TravelMode.DRIVING,
+  };
+
+  directionsService.route(request, (result: google.maps.DirectionsResult, status: google.maps.DirectionsStatus) => {
+    if (status === this.googleMaps.DirectionsStatus.OK) {
+      directionsRenderer.setDirections(result);
+    } else {
+      console.error('Error al calcular la ruta:', status);
+    }
+  });
+}
+
+
+
 
   async loadMap() {
     const mapOptions = {
@@ -536,6 +560,29 @@ export class HomePage implements OnInit {
     const modal = await this.modalController.create({ component });
     await modal.present();
   }
+  async openRecollectionModal() {
+    const modal = await this.modalController.create({
+      component: RecollectionModalComponent,
+    });
+  
+    await modal.present();
+  
+    const { data } = await modal.onDidDismiss();
+    if (data) {
+      console.log('Datos enviados desde el modal:', data);
+  
+      // Generar ubicación aleatoria dentro de 5 km
+      const randomLocation = this.generateRandomLocation(this.center, 5000); // Radio de 5 km
+      console.log('Ubicación del recolector:', randomLocation);
+  
+      // Añadir marcador del recolector
+      this.addMarker(randomLocation.lat, randomLocation.lng, 'assets/icon/recolector.png', { width: 40, height: 40 });
+  
+      // Trazar la ruta hacia la ubicación actual del usuario
+      this.drawRoute(randomLocation, this.center);
+    }
+  }
+  
 
   private async getAuthenticationStatus(): Promise<boolean> {
     return firstValueFrom(this.isAuthenticated$);
@@ -585,5 +632,22 @@ export class HomePage implements OnInit {
     this.searchKeyword = '';
     this.clearMarkers();
     this.loadMap();
+  }
+
+  generateRandomLocation(center: { lat: number; lng: number }, radius: number) {
+    const radiusInDegrees = radius / 111000; // 111000 m = 1 degree
+  
+    const u = Math.random();
+    const v = Math.random();
+    const w = radiusInDegrees * Math.sqrt(u);
+    const t = 2 * Math.PI * v;
+  
+    const deltaLat = w * Math.cos(t);
+    const deltaLng = w * Math.sin(t) / Math.cos(center.lat * (Math.PI / 180));
+  
+    return {
+      lat: center.lat + deltaLat,
+      lng: center.lng + deltaLng,
+    };
   }
 }

@@ -64,26 +64,12 @@
   </ion-fab>
 
   <!-- Botón flotante con logo en la parte inferior derecha -->
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button class="triple-size-button">
-      <img
-        src="/assets/img/logo.jpeg"
-        alt="Logo"
-        style="width: 45px; height: 45px; border-radius: 50%"
-      />
+  <ion-fab slot="fixed" vertical="bottom" horizontal="center">
+    <ion-fab-button color="success" (click)="openRecollectionModal()">
+      <ion-icon name="add-outline"></ion-icon>
     </ion-fab-button>
-    <ion-fab-list side="top">
-      <ion-fab-button style="--width: 40px; --height: 40px">
-        <ion-icon name="document"></ion-icon>
-      </ion-fab-button>
-    </ion-fab-list>
-    <ion-fab-list side="start">
-      <ion-fab-button style="--width: 40px; --height: 40px">
-        <ion-icon name="globe"></ion-icon>
-      </ion-fab-button>
-    </ion-fab-list>
   </ion-fab>
-
+  
   <ion-button expand="full" (click)="search()">Buscar</ion-button>
 
 </ion-content>

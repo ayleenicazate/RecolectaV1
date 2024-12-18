@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { WelcomeModalComponent } from './welcome-modal/welcome-modal.component'; 
-
+import { FormsModule } from '@angular/forms';
 import { AuthService } from './services/auth.service';
 import { FirestoreService } from './services/firestore.service';
 
@@ -23,10 +23,14 @@ import { environment } from '../environments/environment';
 // Importa el módulo login-modal
 import { LoginModalModule } from './login-modal/login-modal.module';
 
+
+import { RecollectionModalComponent } from './recollection-modal/recollection-modal.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     WelcomeModalComponent,  // Mantén WelcomeModalComponent aquí
+    RecollectionModalComponent, // Declara el componente aquí
   ],
   imports: [
     BrowserModule,
@@ -34,6 +38,8 @@ import { LoginModalModule } from './login-modal/login-modal.module';
     AppRoutingModule,
     ReactiveFormsModule,
     LoginModalModule,
+    FormsModule, // Agrega esto
+
 
     // Inicialización de Firebase
     AngularFireModule.initializeApp(environment.firebaseConfig),  // Inicializa Firebase con tus credenciales
